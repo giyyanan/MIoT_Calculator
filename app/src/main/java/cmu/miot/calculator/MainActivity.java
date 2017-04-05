@@ -1,11 +1,13 @@
 package cmu.miot.calculator;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ButtonBarLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import	net.objecthunter.exp4j.Expression;
+import	net.objecthunter.exp4j.ExpressionBuilder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
         this.display = (TextView) findViewById(R.id.display);
         error = false;numPressed=false;dotpressed=false;
+        Button deButton = (Button) findViewById(R.id.del);
+        deButton.setVisibility(View.GONE);
         setNumberClickListeners();
         setOperatorClickListeners();
 
@@ -108,7 +112,74 @@ public class MainActivity extends AppCompatActivity {
             }
             }
         });
+        findViewById(R.id.equal).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+             evaluate();
+            }
+        });
+
 
     }
+
+    private void evaluate(){
+        if(numPressed && !error){
+            String exp = display.getText().toString();
+            Expression Exp = new ExpressionBuilder(exp).build();
+            try{
+                double result = Exp.evaluate();
+                display.setText(Double.toString(result));
+                dotpressed = true;
+            }
+            catch (Exception e){
+                display.setText("Error");
+                numPressed = false;
+                error = true;
+            }
+        }
+    }
+    //oldMethodforManualevaluation
+    /*
+    private String evaluateArithmetic(String exp){
+        try{
+            //String exp = display.getText().toString();
+            String[] numbers = exp.split("[^0-9.]");
+            String[] operators = exp.split("[0-9.]");
+            String Value = "";
+            if(!exp.equals("error")){
+            int emptyStrings = 0;
+            for (String op : operators){
+                if(!op.equals("")){
+                    emptyStrings++;
+                }
+            }
+            String[] validOperations = new String[emptyStrings];
+            emptyStrings = 0;
+            for (String op : operators){
+                if(!op.equals("")){
+                   validOperations[emptyStrings] = op;
+                    emptyStrings++;
+                }
+            }
+            if(numbers.length ==validOperations.length+1){
+                //Do all divisions first
+                for(String operands:validOperations){
+                    if(operands.equals("/"))
+                    {
+
+                    }
+                }
+            }}
+            else{
+                return "error";
+            }
+        }
+        catch (Exception e){
+            display.setText("Error");
+            error = true;
+            numPressed = false;
+        }
+        return "";
+    }*/
 
 }
