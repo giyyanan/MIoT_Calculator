@@ -10,8 +10,9 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private TextView display;
-    private Boolean number;
+    private Boolean numPressed,dotpressed,error;
     private Float numberValue;
+    private String operands = "/*+-";
     private int[] numButtons = {R.id.one,R.id.two,R.id.three,R.id.four,R.id.five,R.id.six,R.id.seven,R.id.eight,R.id.nine,R.id.zero};
     private int[] opButtons = {R.id.sub,R.id.mul,R.id.div,R.id.sum};
     @Override
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.display = (TextView) findViewById(R.id.display);
+        error = false;numPressed=false;dotpressed=false;
         setNumberClickListeners();
         setOperatorClickListeners();
 
@@ -28,10 +30,15 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener numListener = new View.OnClickListener(){
             @Override
             public void onClick(View v)	{
-
-                Button button =	(Button) v;
-                display.append(button.getText());
-
+                if(error){
+                    display.setText("");
+                    error = false;
+                }
+                else {
+                    Button button = (Button) v;
+                    display.append(button.getText());
+                    numPressed = true;
+                }
             }
         };
         for	(int	id	:	numButtons)	{
@@ -43,9 +50,13 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener oprListener = new View.OnClickListener(){
             @Override
             public void onClick(View v)	{
+                if(numPressed && !error){
 
                 Button button = (Button) v;
                 display.append(button.getText());
+                    numPressed = false;
+                    dotpressed = false;
+                }
 
             }
         };
@@ -59,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
             public void	onClick(View v){
 
                 display.setText("");
+                numPressed = false;
+                error = false;
+                dotpressed = false;
             }
         });
 
@@ -67,8 +81,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void	onClick(View v){
                 String Value = display.getText().toString();
+                Character lastChar = Value.charAt(Value.length()-1);
                 if(Value.length()>0) {
                     display.setText(Value.substring(0, Value.length() - 1));
+                    if(operands.contains(lastChar.toString())){
+                        numPressed = true;
+                        display.getText().toString().split("[+-/*]]");
+                        if(Value.substring(0, Value.length() - 1).lastIndexOf('.')>0){
+
+                        }
+                    }
+                    if(lastChar.equals('.')){
+                        dotpressed = false;
+                    }
                 }
             }
         });
@@ -76,8 +101,11 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.dot).setOnClickListener( new View.OnClickListener(){
             @Override
             public void	onClick(View v){
-
+                if(!dotpressed && numPressed && !error){
                 display.append(".");
+                    dotpressed = true;
+                    numPressed = false;
+            }
             }
         });
 
