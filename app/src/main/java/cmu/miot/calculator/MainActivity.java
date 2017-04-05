@@ -24,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
         this.display = (TextView) findViewById(R.id.display);
         error = false;numPressed=false;dotpressed=false;
-        Button deButton = (Button) findViewById(R.id.del);
-        deButton.setVisibility(View.GONE);
+        //Button deButton = (Button) findViewById(R.id.del);
+        //deButton.setVisibility(View.GONE);
         setNumberClickListeners();
         setOperatorClickListeners();
 
@@ -85,19 +85,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void	onClick(View v){
                 String Value = display.getText().toString();
+                if(Value.length()>0){
                 Character lastChar = Value.charAt(Value.length()-1);
                 if(Value.length()>0) {
                     display.setText(Value.substring(0, Value.length() - 1));
                     if(operands.contains(lastChar.toString())){
                         numPressed = true;
-                        display.getText().toString().split("[+-/*]]");
-                        if(Value.substring(0, Value.length() - 1).lastIndexOf('.')>0){
-
+                        String[] numberTokens = display.getText().toString().split("[^0-9.]");
+                        if((numberTokens[numberTokens.length-1]).contains(".")){
+                            dotpressed = true;
                         }
                     }
                     if(lastChar.equals('.')){
                         dotpressed = false;
                     }
+                }
                 }
             }
         });
